@@ -35,7 +35,7 @@ window.onload = function() {
   };
 
   var computer = new Paddle(30, 205, 20, 90);
-  var player = new Paddle(650, 205, 20, 90);
+  var player = new Paddle(651, 205, 20, 90);
   var ball = new Ball(320, 240, 20, 20);
 
   function render() {
