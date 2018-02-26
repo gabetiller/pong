@@ -131,6 +131,13 @@ Ball.prototype.update = function(paddle1, paddle2) {
     this.x_speed = -this.x_speed;
   }
 
+
+  if(this.y < 0) {
+    player.score ++;
+  } else if(this.y > 600) {
+    computer.score ++;
+  }
+
   if(this.y < 0 || this.y > 600) {
     this.x_speed = 0;
     this.y_speed = 3;
@@ -153,6 +160,17 @@ Ball.prototype.update = function(paddle1, paddle2) {
   }
 };
 
+function drawComputerScore() {
+context.font = "30px Helvetica";
+context.fillStyle ="yellow"
+context.fillText(computer.score,20,canvas.height/2 - 50);
+}
+
+function drawPlayerScore() {
+context.font = "30px Helvetica";
+context.fillStyle ="yellow"
+context.fillText(player.score, 20, canvas.height/2 + 70);
+}
 
 var player = new Player();
 var computer = new Computer();
@@ -180,6 +198,8 @@ function render() {
   computer.render();
   ball.render();
   net.render();
+  drawPlayerScore();
+  drawComputerScore();
 };
 
 function update() {
