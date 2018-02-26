@@ -21,6 +21,19 @@ function Paddle(x, y, width, height) {
   this.y_speed = 0;
 }
 
+function Net(x, y, width, height) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+}
+
+Net.prototype.render = function() {
+  context.fillStyle = "#ffff00";
+  context.fillRect(this.x, this.y, this.width, this.height);
+}
+
+
 Paddle.prototype.render = function() {
   context.fillStyle = "#ffff00";
   context.fillRect(this.x, this.y, this.width, this.height);
@@ -42,6 +55,7 @@ Paddle.prototype.move = function(x, y) {
 
 function Player() {
   this.paddle = new Paddle(160, 580, 90, 10);
+  this.score = 0;
 };
 
 Player.prototype.render = function() {
@@ -59,6 +73,31 @@ Player.prototype.update = function() {
       this.paddle.move(0, 0);
     }
   }
+};
+
+function Computer() {
+  this.paddle = new Paddle(160, 10, 90, 10);
+  this.score = 0;
+}
+
+Computer.prototype.update = function(ball) {
+  var x_pos = ball.x;
+  var diff = -((this.paddle.x + (this.paddle.width / 2)) - x_pos);
+  if(diff < 0 && diff < -4) {
+    diff = -5;
+  } else if(diff > 0 && diff > 4) {
+    diff = 5;
+  }
+  this.paddle.move(diff, 0);
+  if(this.paddle.x < 0) {
+    this.paddle.x = 0;
+  } else if (this.paddle.x + this.paddle.width > 400) {
+    this.paddle.x = 400 - this.paddle.width;
+  }
+};
+
+Computer.prototype.render = function() {
+  this.paddle.render();
 };
 
 function Ball(x, y) {
@@ -105,21 +144,21 @@ Ball.prototype.update = function(paddle1, paddle2) {
       this.x_speed += (paddle1.x_speed / 2);
       this.y += this.y_speed;
     }
+  } else {
+    if(top_y < (paddle2.y + paddle2.height) && bottom_y > paddle2.y && top_x < (paddle2.x + paddle2.width) && bottom_x > paddle2.x) {
+      this.y_speed = 3;
+      this.x_speed += (paddle2.x_speed / 2);
+      this.y += this.y_speed;
+    }
   }
 };
 
-function Computer() {
-  this.paddle = new Paddle(160, 10, 90, 10);
-}
-
-
-Computer.prototype.render = function() {
-  this.paddle.render();
-};
 
 var player = new Player();
 var computer = new Computer();
-var ball = new Ball(200, 300)
+var ball = new Ball(200, 300);
+var net = new Net(0, canvas.height / 2 -2, 400, 1.5);
+
 
 var keysDown = {};
 
@@ -140,11 +179,13 @@ function render() {
   player.render();
   computer.render();
   ball.render();
+  net.render();
 };
 
 function update() {
   ball.update(player.paddle, computer.paddle)
   player.update();
+  computer.update(ball);
 };
 
 function step() {
