@@ -21,19 +21,6 @@ function Paddle(x, y, width, height) {
   this.y_speed = 0;
 }
 
-function Net(x, y, width, height) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-}
-
-Net.prototype.render = function() {
-  context.fillStyle = "#ffff00";
-  context.fillRect(this.x, this.y, this.width, this.height);
-}
-
-
 Paddle.prototype.render = function() {
   context.fillStyle = "#ffff00";
   context.fillRect(this.x, this.y, this.width, this.height);
@@ -100,6 +87,18 @@ Computer.prototype.render = function() {
   this.paddle.render();
 };
 
+function Net(x, y, width, height) {
+  this.x = x;
+  this.y = y;
+  this.width = width;
+  this.height = height;
+}
+
+Net.prototype.render = function() {
+  context.fillStyle = "#ffff00";
+  context.fillRect(this.x, this.y, this.width, this.height);
+}
+
 function Ball(x, y) {
   this.x = x;
   this.y = y;
@@ -138,9 +137,10 @@ Ball.prototype.update = function(paddle1, paddle2) {
     computer.score ++;
   }
 
+
   if(this.y < 0 || this.y > 600) {
     this.x_speed = 0;
-    this.y_speed = 3;
+    this.y_speed = 4;
     this.x = 200;
     this.y = 300;
   }
@@ -161,22 +161,55 @@ Ball.prototype.update = function(paddle1, paddle2) {
 };
 
 function drawComputerScore() {
-context.font = "30px Helvetica";
-context.fillStyle ="yellow"
-context.fillText(computer.score,20,canvas.height/2 - 50);
+  context.font = "30px Helvetica";
+  context.fillStyle ="yellow"
+  context.fillText(computer.score,20,canvas.height/2 - 50);
 }
 
 function drawPlayerScore() {
-context.font = "30px Helvetica";
-context.fillStyle ="yellow"
-context.fillText(player.score, 20, canvas.height/2 + 70);
+  context.font = "30px Helvetica";
+  context.fillStyle ="yellow"
+  context.fillText(player.score, 20, canvas.height/2 + 70);
 }
+
+function drawYouWin() {
+  context.font = "35px Helvetica";
+  context.fillStyle ="yellow";
+  context.fillText("YOU WIN",canvas.width/2,canvas.height/2 - 48);
+  context.font = "17px Helvetica";
+  context.textAlign='center';
+  context.fillText("MORE CONQUER? DO REFRESH",canvas.width/2,canvas.height/2 +65);
+};
+
+function drawYouLose() {
+  context.font = "35px Helvetica";
+  context.fillStyle ="yellow";
+  context.fillText("GAME OVER",canvas.width/2,canvas.height/2 - 48);
+  context.font = "17px Helvetica";
+  context.textAlign='center';
+  context.fillText("MORE SUFFER? DO REFRESH",canvas.width/2,canvas.height/2 +65);
+}
+
+function winGame() {
+  if (player.score > 10) {
+    ball.x_speed = 0;
+    ball.y_speed = 0;
+    ball.x = 200;
+    ball.y = 300;
+    drawYouWin();
+  } else if (computer.score > 10) {
+    ball.x_speed = 0;
+    ball.y_speed = 0;
+    ball.x = 200;
+    ball.y = 300;
+    drawYouLose();
+  }
+};
 
 var player = new Player();
 var computer = new Computer();
 var ball = new Ball(200, 300);
 var net = new Net(0, canvas.height / 2 -2, 400, 1.5);
-
 
 var keysDown = {};
 
@@ -200,6 +233,7 @@ function render() {
   net.render();
   drawPlayerScore();
   drawComputerScore();
+  winGame();
 };
 
 function update() {
